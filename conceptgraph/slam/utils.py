@@ -797,6 +797,20 @@ def merge_objects(
     
 def filter_captions(captions, detection_class_labels):
     # Create a dictionary to map id to the index in the captions list
+    print("DEBUG - Type of captions:", type(captions))
+    print("DEBUG - Content of captions (first 5 items if list):", captions[:5] if isinstance(captions, list) else captions)
+
+    # check captions type
+    if isinstance(captions, str):
+        try:
+            captions = json.loads(captions) # str to JSON
+        except json.JSONDecodeError:
+            raise ValueError("Error: 'captions' is a string but not valid JSON.")
+
+    # Ensure captions is a list of dictionaries
+    if not isinstance(captions, list) or any(not isinstance(item, dict) for item in captions):
+        raise TypeError("Error: 'captions' must be a list of dictionaries.")
+    
     captions_index = {item['id']: index for index, item in enumerate(captions)}
     
     # Initialize a new list to store the cleaned and matched captions
@@ -885,7 +899,10 @@ def filter_gobs(
             gobs[attribute] = gobs[attribute][idx_to_keep]
         else:
             raise NotImplementedError(f"Unhandled type {type(gobs[attribute])}")
-        
+
+    print("DEBUG - BEFORE filter_captions")
+    print("DEBUG - Type of gobs['captions']:", type(gobs['captions']))
+    print("DEBUG - Content of gobs['captions'] (first 5):", gobs['captions'][:5] if isinstance(gobs['captions'], list) else gobs['captions'])    
     filtered_captions = filter_captions(gobs['captions'], gobs['detection_class_labels'])
     gobs['captions'] = filtered_captions
 

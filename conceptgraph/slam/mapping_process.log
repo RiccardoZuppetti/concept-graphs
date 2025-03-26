@@ -1,0 +1,8 @@
+2025-01-31 11:08:55,098 - INFO - Loading faiss with AVX2 support.
+2025-01-31 11:08:55,161 - INFO - Successfully loaded faiss with AVX2 support.
+2025-01-31 11:08:56,505 - DEBUG - Setting JobRuntime:name=UNKNOWN_NAME
+2025-01-31 11:08:56,505 - DEBUG - Setting JobRuntime:name=rerun_realtime_mapping
+2025-01-31 11:14:45,166 - INFO - Loading faiss with AVX2 support.
+2025-01-31 11:14:45,187 - INFO - Successfully loaded faiss with AVX2 support.
+2025-01-31 11:14:45,696 - DEBUG - Setting JobRuntime:name=UNKNOWN_NAME
+2025-01-31 11:14:45,696 - DEBUG - Setting JobRuntime:name=rerun_realtime_mapping

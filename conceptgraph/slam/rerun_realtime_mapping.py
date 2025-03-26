@@ -39,11 +39,11 @@ from conceptgraph.utils.optional_rerun_wrapper import (
 from conceptgraph.utils.optional_wandb_wrapper import OptionalWandB
 from conceptgraph.utils.geometry import rotation_matrix_to_quaternion
 from conceptgraph.utils.logging_metrics import DenoisingTracker, MappingTracker
-from conceptgraph.utils.vlm import consolidate_captions, get_obj_rel_from_image_gpt4v, get_openai_client
+from conceptgraph.utils.vlm import consolidate_captions, get_obj_rel_from_image_gpt4v, get_openai_client, consolidate_captions_ollama
 from conceptgraph.utils.ious import mask_subtract_contained
 from conceptgraph.utils.general_utils import (
     ObjectClasses, 
-    find_existing_image_path, 
+    find_existing_image_path,
     get_det_out_path, 
     get_exp_out_path, 
     get_vlm_annotated_image_path, 
@@ -174,7 +174,9 @@ def main(cfg : DictConfig):
 
         ## Initialize the detection models
         detection_model = measure_time(YOLO)('yolov8l-world.pt')
-        sam_predictor = SAM('sam_l.pt') # SAM('mobile_sam.pt') # UltraLytics SAM
+        # sam_predictor = SAM('sam_l.pt') # use SAM
+        sam_predictor = SAM('mobile_sam.pt') # use mobile-SAM # UltraLytics SAM
+        # sam_predictor = SAM("sam2_l.pt")  # SAM 2
         # sam_predictor = measure_time(get_sam_predictor)(cfg) # Normal SAM
         clip_model, _, clip_preprocess = open_clip.create_model_and_transforms(
             "ViT-H-14", "laion2b_s32b_b79k"
@@ -269,6 +271,12 @@ def main(cfg : DictConfig):
             
             # Make the edges
             labels, edges, edge_image, captions = make_vlm_edges_and_captions(image, curr_det, obj_classes, detection_class_labels, det_exp_vis_path, color_path, cfg.make_edges, openai_client)
+            #labels, edges, edge_image, captions = make_vlm_edges_and_captions(image, curr_det, obj_classes, detection_class_labels, det_exp_vis_path, color_path, False, None)
+
+            print("**********")
+            print("DEBUG - Type of captions before storing in results:", type(captions))
+            print("DEBUG - Content of captions (first 5 items if list):", captions[:5] if isinstance(captions, list) else captions)
+            print("**********")
 
             image_crops, image_feats, text_feats = compute_clip_features_batched(
                 image_rgb, curr_det, clip_model, clip_preprocess, clip_tokenizer, obj_classes.get_classes_arr(), cfg.device)
@@ -504,7 +512,7 @@ def main(cfg : DictConfig):
             frame_idx,
             is_final_frame,
         ):
-            objects, map_edges = measure_time(merge_objects)(
+            merged_results = measure_time(merge_objects)(
                 merge_overlap_thresh=cfg["merge_overlap_thresh"],
                 merge_visual_sim_thresh=cfg["merge_visual_sim_thresh"],
                 merge_text_sim_thresh=cfg["merge_text_sim_thresh"],
@@ -518,6 +526,12 @@ def main(cfg : DictConfig):
                 do_edges=cfg["make_edges"],
                 map_edges=map_edges
             )
+
+            if cfg["make_edges"]:
+                objects, map_edges = merged_results
+            else:
+                objects = merged_results
+
         orr_log_objs_pcd_and_bbox(objects, obj_classes)
         orr_log_edges(objects, map_edges, obj_classes)
 
@@ -586,7 +600,9 @@ def main(cfg : DictConfig):
     # Consolidate captions 
     for object in objects:
         obj_captions = object['captions'][:20]
-        consolidated_caption = consolidate_captions(openai_client, obj_captions)
+        # consolidated_caption = consolidate_captions(openai_client, obj_captions)
+        # consolidated_caption = consolidate_captions(None, obj_captions)
+        consolidated_caption = consolidate_captions_ollama(obj_captions)
         object['consolidated_caption'] = consolidated_caption
 
     handle_rerun_saving(cfg.use_rerun, cfg.save_rerun, cfg.exp_suffix, exp_out_path)
