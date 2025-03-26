@@ -1,0 +1,84 @@
+2025-01-29 13:37:27,161 - INFO - Loading faiss with AVX2 support.
+2025-01-29 13:37:27,225 - INFO - Successfully loaded faiss with AVX2 support.
+2025-01-29 13:48:17,575 - INFO - Loading faiss with AVX2 support.
+2025-01-29 13:48:17,595 - INFO - Successfully loaded faiss with AVX2 support.
+2025-01-29 13:49:08,260 - INFO - Loading faiss with AVX2 support.
+2025-01-29 13:49:08,280 - INFO - Successfully loaded faiss with AVX2 support.
+2025-01-29 13:49:08,808 - DEBUG - Setting JobRuntime:name=UNKNOWN_NAME
+2025-01-29 13:49:08,808 - DEBUG - Setting JobRuntime:name=rerun_realtime_mapping
+2025-01-29 13:58:56,724 - INFO - Loading faiss with AVX2 support.
+2025-01-29 13:58:56,744 - INFO - Successfully loaded faiss with AVX2 support.
+2025-01-29 13:58:57,244 - DEBUG - Setting JobRuntime:name=UNKNOWN_NAME
+2025-01-29 13:58:57,244 - DEBUG - Setting JobRuntime:name=rerun_realtime_mapping
+2025-01-29 14:18:23,430 - INFO - Loading faiss with AVX2 support.
+2025-01-29 14:18:23,449 - INFO - Successfully loaded faiss with AVX2 support.
+2025-01-29 14:18:23,950 - DEBUG - Setting JobRuntime:name=UNKNOWN_NAME
+2025-01-29 14:18:23,951 - DEBUG - Setting JobRuntime:name=rerun_realtime_mapping
+2025-01-29 16:38:33,831 - INFO - Loading faiss with AVX2 support.
+2025-01-29 16:38:33,894 - INFO - Successfully loaded faiss with AVX2 support.
+2025-01-29 16:38:35,190 - DEBUG - Setting JobRuntime:name=UNKNOWN_NAME
+2025-01-29 16:38:35,190 - DEBUG - Setting JobRuntime:name=rerun_realtime_mapping
+2025-01-29 16:47:54,072 - INFO - Loading faiss with AVX2 support.
+2025-01-29 16:47:54,085 - INFO - Successfully loaded faiss with AVX2 support.
+2025-01-29 16:49:37,950 - INFO - Loading faiss with AVX2 support.
+2025-01-29 16:49:37,962 - INFO - Successfully loaded faiss with AVX2 support.
+2025-01-29 16:49:39,315 - INFO - Loaded ViT-H-14 model config.
+2025-01-29 16:49:47,447 - DEBUG - Starting new HTTPS connection (1): huggingface.co:443
+2025-01-29 16:49:47,581 - DEBUG - https://huggingface.co:443 "HEAD /laion/CLIP-ViT-H-14-laion2B-s32B-b79K/resolve/main/open_clip_model.safetensors HTTP/1.1" 302 0
+2025-01-29 16:49:47,582 - INFO - Loading pretrained ViT-H-14 weights (laion2b_s32b_b79k).
+2025-01-31 10:45:39,863 - INFO - Loading faiss with AVX2 support.
+2025-01-31 10:45:39,921 - INFO - Successfully loaded faiss with AVX2 support.
+2025-01-31 10:45:41,309 - INFO - Loaded ViT-H-14 model config.
+2025-01-31 10:45:52,881 - DEBUG - Starting new HTTPS connection (1): huggingface.co:443
+2025-01-31 10:45:53,003 - DEBUG - https://huggingface.co:443 "HEAD /laion/CLIP-ViT-H-14-laion2B-s32B-b79K/resolve/main/open_clip_model.safetensors HTTP/1.1" 302 0
+2025-01-31 10:45:53,008 - INFO - Loading pretrained ViT-H-14 weights (laion2b_s32b_b79k).
+2025-02-03 10:49:47,796 - INFO - Loading faiss with AVX2 support.
+2025-02-03 10:49:47,888 - INFO - Successfully loaded faiss with AVX2 support.
+2025-02-03 10:49:49,172 - DEBUG - Setting JobRuntime:name=UNKNOWN_NAME
+2025-02-03 10:49:49,173 - DEBUG - Setting JobRuntime:name=rerun_realtime_mapping
+2025-02-03 11:01:42,613 - INFO - Loading faiss with AVX2 support.
+2025-02-03 11:01:42,625 - INFO - Successfully loaded faiss with AVX2 support.
+2025-02-03 11:02:37,318 - INFO - Loading faiss with AVX2 support.
+2025-02-03 11:02:37,330 - INFO - Successfully loaded faiss with AVX2 support.
+2025-02-03 11:03:47,423 - INFO - Loading faiss with AVX2 support.
+2025-02-03 11:03:47,436 - INFO - Successfully loaded faiss with AVX2 support.
+2025-02-03 11:03:49,064 - INFO - Loaded ViT-H-14 model config.
+2025-02-03 11:03:57,540 - DEBUG - Starting new HTTPS connection (1): huggingface.co:443
+2025-02-03 11:03:57,661 - DEBUG - https://huggingface.co:443 "HEAD /laion/CLIP-ViT-H-14-laion2B-s32B-b79K/resolve/main/open_clip_model.safetensors HTTP/1.1" 302 0
+2025-02-03 11:03:57,662 - INFO - Loading pretrained ViT-H-14 weights (laion2b_s32b_b79k).
+2025-02-03 11:05:31,580 - INFO - Loading faiss with AVX2 support.
+2025-02-03 11:05:31,592 - INFO - Successfully loaded faiss with AVX2 support.
+2025-02-03 11:05:33,223 - INFO - Loaded ViT-H-14 model config.
+2025-02-03 11:05:41,285 - DEBUG - Starting new HTTPS connection (1): huggingface.co:443
+2025-02-03 11:05:41,401 - DEBUG - https://huggingface.co:443 "HEAD /laion/CLIP-ViT-H-14-laion2B-s32B-b79K/resolve/main/open_clip_model.safetensors HTTP/1.1" 302 0
+2025-02-03 11:05:41,401 - INFO - Loading pretrained ViT-H-14 weights (laion2b_s32b_b79k).
+2025-02-03 15:13:46,546 - INFO - Loading faiss with AVX2 support.
+2025-02-03 15:13:46,612 - INFO - Successfully loaded faiss with AVX2 support.
+2025-02-03 15:13:47,723 - DEBUG - Setting JobRuntime:name=UNKNOWN_NAME
+2025-02-03 15:13:47,723 - DEBUG - Setting JobRuntime:name=rerun_realtime_mapping
+2025-02-03 15:18:19,044 - INFO - Loading faiss with AVX2 support.
+2025-02-03 15:18:19,066 - INFO - Successfully loaded faiss with AVX2 support.
+2025-02-03 15:18:19,570 - DEBUG - Setting JobRuntime:name=UNKNOWN_NAME
+2025-02-03 15:18:19,570 - DEBUG - Setting JobRuntime:name=rerun_realtime_mapping
+2025-02-03 15:22:35,052 - INFO - Loading faiss with AVX2 support.
+2025-02-03 15:22:35,065 - INFO - Successfully loaded faiss with AVX2 support.
+2025-03-10 14:47:04,033 - INFO - Loading faiss with AVX2 support.
+2025-03-10 14:47:04,101 - INFO - Successfully loaded faiss with AVX2 support.
+2025-03-10 14:47:05,415 - DEBUG - Setting JobRuntime:name=UNKNOWN_NAME
+2025-03-10 14:47:05,415 - DEBUG - Setting JobRuntime:name=rerun_realtime_mapping
+2025-03-10 14:53:30,249 - INFO - Loading faiss with AVX2 support.
+2025-03-10 14:53:30,271 - INFO - Successfully loaded faiss with AVX2 support.
+2025-03-10 14:53:30,901 - DEBUG - Setting JobRuntime:name=UNKNOWN_NAME
+2025-03-10 14:53:30,901 - DEBUG - Setting JobRuntime:name=rerun_realtime_mapping
+2025-03-10 14:56:34,458 - INFO - Loading faiss with AVX2 support.
+2025-03-10 14:56:34,478 - INFO - Successfully loaded faiss with AVX2 support.
+2025-03-10 14:56:35,051 - DEBUG - Setting JobRuntime:name=UNKNOWN_NAME
+2025-03-10 14:56:35,051 - DEBUG - Setting JobRuntime:name=rerun_realtime_mapping
+2025-03-10 15:25:14,502 - INFO - Loading faiss with AVX2 support.
+2025-03-10 15:25:14,522 - INFO - Successfully loaded faiss with AVX2 support.
+2025-03-10 15:25:15,097 - DEBUG - Setting JobRuntime:name=UNKNOWN_NAME
+2025-03-10 15:25:15,097 - DEBUG - Setting JobRuntime:name=rerun_realtime_mapping
+2025-03-10 15:38:45,726 - INFO - Loading faiss with AVX2 support.
+2025-03-10 15:38:45,747 - INFO - Successfully loaded faiss with AVX2 support.
+2025-03-10 15:38:46,358 - DEBUG - Setting JobRuntime:name=UNKNOWN_NAME
+2025-03-10 15:38:46,358 - DEBUG - Setting JobRuntime:name=rerun_realtime_mapping
