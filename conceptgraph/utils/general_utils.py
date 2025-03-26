@@ -11,7 +11,7 @@ from conceptgraph.slam.utils import prepare_objects_save_vis
 from conceptgraph.utils.ious import mask_subtract_contained
 import supervision as sv
 import scipy.ndimage as ndi 
-from conceptgraph.utils.vlm import get_obj_captions_from_image_gpt4v, get_obj_rel_from_image_gpt4v, vlm_extract_object_captions
+from conceptgraph.utils.vlm import get_obj_captions_from_image_gpt4v, get_obj_rel_from_image_gpt4v, vlm_extract_object_captions, get_obj_captions_from_image_ollama, get_obj_rel_from_image_ollama
 import cv2
 import re
 
@@ -152,14 +152,14 @@ def mask_iou(mask1, mask2):
 def annotate_for_vlm(
     image: np.ndarray, 
     detections: sv.Detections,
-    obj_classes, 
-    labels: list[str], 
-    save_path=None, 
-    color: tuple=(0, 255, 0), 
-    thickness: int=2, 
-    text_color: tuple=(255, 255, 255), 
-    text_scale: float=0.6, 
-    text_thickness: int=2, 
+    obj_classes,
+    labels: list[str],
+    save_path=None,
+    color: tuple=(0, 255, 0),
+    thickness: int=2,
+    text_color: tuple=(255, 255, 255),
+    text_scale: float=0.6,
+    text_thickness: int=2,
     text_bg_color: tuple=(255, 255, 255), 
     text_bg_opacity: float=0.95,  # Opacity from 0 (transparent) to 1 (opaque)
     small_mask_threshold = 0.002,
@@ -250,10 +250,10 @@ def annotate_for_vlm(
         
         # Draw text with background
         cv2.putText(
-            annotated_image, 
-            text, 
-            (text_x_left, text_y_top - baseline), 
-            cv2.FONT_HERSHEY_SIMPLEX, 
+            annotated_image,
+            text,
+            (text_x_left, text_y_top - baseline),
+            cv2.FONT_HERSHEY_SIMPLEX,
             text_scale,
             # (0,0,0), 
             obj_color,
@@ -442,6 +442,7 @@ def make_vlm_edges_and_captions(image, curr_det, obj_classes, detection_class_la
         given_labels=detection_class_labels,
     )
     
+    captions = []
     edges = []
     edge_image = None
     if make_edges_flag:
@@ -459,8 +460,10 @@ def make_vlm_edges_and_captions(image, curr_det, obj_classes, detection_class_la
         cv2.imwrite(str(vis_save_path_for_vlm), annotated_image_for_vlm)
         print(f"Line 313, vis_save_path_for_vlm: {vis_save_path_for_vlm}")
         
-        edges = get_obj_rel_from_image_gpt4v(openai_client, vis_save_path_for_vlm, label_list)
-        captions = get_obj_captions_from_image_gpt4v(openai_client, vis_save_path_for_vlm, label_list)
+        # edges = get_obj_rel_from_image_gpt4v(openai_client, vis_save_path_for_vlm, label_list)
+        # captions = get_obj_captions_from_image_gpt4v(openai_client, vis_save_path_for_vlm, label_list)
+        edges = get_obj_rel_from_image_ollama(vis_save_path_for_vlm, label_list)
+        captions = get_obj_captions_from_image_ollama(vis_save_path_for_vlm, label_list)
         edge_image = plot_edges_from_vlm(annotated_image_for_vlm, edges, filtered_detections, obj_classes, labels, sorted_indices, save_path=vis_save_path_for_vlm_edges)
     
     return labels, edges, edge_image, captions

@@ -9,6 +9,8 @@ import numpy as np
 import ast
 import re
 
+import ollama
+
 system_prompt_1 = '''
 You are an agent specialized in describing the spatial relationships between objects in an annotated image.
 
@@ -46,10 +48,21 @@ The relation types you must report are:
 - phyically placed on top of: ("object x", "on top of", "object y") 
 - phyically placed underneath: ("object x", "under", "object y") 
 
-An illustrative example of the expected response format might look like this:
-[("object 1", "on top of", "object 2"), ("object 3", "under", "object 2"), ("object 4", "on top of", "object 3")]. Do not put the names of the objects in your response, only the numeric ids.
+An illustrative example of the expected response format MUST look like this:
 
-Do not include any other information in your response. Only output a parsable list of tuples describing the given physical relationships between objects in the image.
+[("object 1", "on top of", "object 2"), ("object 3", "under", "object 2"), ("object 4", "on top of", "object 3")].
+
+This response format is a LIST OF TUPLES.
+
+So a list is opened by a square bracket and closed by a square bracket: EACH element of the list must be a tuple of 3 elements, where a tuple is opened by a round bracket and closed by a round bracket.
+
+Do not put the names of the objects in your response, only the numeric ids.
+
+Do not include any other information in your response. ONLY output a parsable LIST OF TUPLES describing the given physical relationships between objects in the image, like the example reported above.
+
+Remember the format of the output, because is the ONLY ONE ADMITTED.
+
+Remember to close each structure, so the list MUST BE opened by a square bracket and closed by a square bracket as well, and each element of the list, a tuple, MUST be opened by a round bracket and closed by a round bracket as well.
 '''
 
 # For captions
@@ -62,7 +75,7 @@ You will also be given a text list of the numeric ids and names of the objects i
 
 The names were obtained from a simple object detection system and may be inaacurate.
 
-Your response should be in the format of a list of dictionaries, where each dictionary contains the id, name, and caption of an object. Your response will be evaluated as a python list of dictionaries, so make sure to format it correctly. An example of the expected response format is as follows:
+Your response MUST be in the format of a list of dictionaries, where each dictionary contains the id, name, and caption of an object. Your response will be evaluated as a python list of dictionaries, so make sure to format it correctly. An example of the expected response format MUST BE as follows:
 [
     {"id": "1", "name": "object1", "caption": "concise description of the object1 in the image"},
     {"id": "2", "name": "object2", "caption": "concise description of the object2 in the image"},
@@ -70,7 +83,13 @@ Your response should be in the format of a list of dictionaries, where each dict
     ...
 ]
 
+So, your response SHOULD ONLY CONTAIN the list of dictionaries AS SHOWN ABOVE. YOU DO NOT HAVE TO REPORT ANYTHING OTHER THAN THIS LIST OF DICTIONARIES.
+
+ALWAYS REMEMBER THE LIST STRUCTURE, WHICH opens and closes with a square bracket, and each element of the list is a dictionary. DO NOT NUMBER THE LIST ELEMENTS. THE FORMAT MUST ONLY BE THE ONE GIVEN.
+
 And each caption must be a concise description of the object in the image.
+
+REMEMBER TO CLOSE THE LIST STRUCTURE WITH THE SQUARE BRACKET.
 '''
 
 system_prompt_consolidate_captions = '''
@@ -192,6 +211,34 @@ def consolidate_captions(client: OpenAI, captions: list):
         consolidated_caption = ""
 
     return consolidated_caption
+
+
+def consolidate_captions_ollama(captions: list):
+    # Formatting the captions into a single string prompt
+    captions_text = "\n".join([f"{cap['caption']}" for cap in captions if cap['caption'] is not None])
+    user_query = f"Here are several captions for the same object:\n{captions_text}\n\nPlease consolidate these into a single, clear caption that accurately describes the object."
+    consolidated_caption = ""
+    
+    try:
+        response = ollama.chat(
+            model="llama3.2-vision",
+            #model="minicpm-v",
+            messages=[
+                {"role": "system", "content": system_prompt_consolidate_captions},
+                {"role": "user", "content": user_query}
+            ],
+            format="json"
+        )
+        
+        consolidated_caption_json = response['message']['content'].strip()
+        consolidated_caption = json.loads(consolidated_caption_json).get("consolidated_caption", "")
+        print(f"Consolidated Caption: {consolidated_caption}")
+
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        consolidated_caption = ""
+
+    return consolidated_caption
     
 def extract_list_of_tuples(text: str):
     # Pattern to match a list of tuples, considering a list that starts with '[' and ends with ']'
@@ -304,7 +351,10 @@ def get_obj_rel_from_image_gpt4v(client: OpenAI, image_path: str, label_list: li
     
     return vlm_answer
 
-    
+def is_list_of_dicts(obj):
+    return isinstance(obj, list) and all(isinstance(item, dict) for item in obj)
+
+
 def get_obj_captions_from_image_gpt4v(client: OpenAI, image_path: str, label_list: list):
     # Getting the base64 string
     base64_image = encode_image_for_openai(image_path)
@@ -358,3 +408,104 @@ def get_obj_captions_from_image_gpt4v(client: OpenAI, image_path: str, label_lis
     
     
     return vlm_answer_captions
+
+def get_obj_captions_from_image_ollama(image_path: str, label_list: list):
+    global system_prompt
+    
+    user_query = f"Here is the list of labels for the annotations of the objects in the image: {label_list}. Please accurately caption the objects in the image."
+    
+    vlm_answer_captions = []
+    max_retries = 3
+    attempts = 0
+    
+    while attempts < max_retries:
+        try:
+            response = ollama.chat(
+                model="llama3.2-vision",
+                #model="minicpm-v",
+                messages=[
+                    {"role": "system", "content": system_prompt_captions},
+                    {"role": "user", "content": user_query, "images": [image_path]}
+                ]
+            )
+            
+            vlm_answer_str = response['message']['content']
+            print(f"Line ollama_cap, vlm_answer_str: {vlm_answer_str}")
+            # print(type(vlm_answer_str))
+            # input()
+            
+            vlm_answer_captions = vlm_extract_object_captions(vlm_answer_str)
+            # print(type(vlm_answer_captions))
+            # input()
+
+            # print(is_list_of_dicts(vlm_answer_captions))
+            # input()
+
+            if is_list_of_dicts(vlm_answer_captions):
+                break
+
+        except Exception as e:
+            print(f"An error occurred: {str(e)}")
+
+        print(f"Invalid response, retrying... ({attempts + 1}/{max_retries})")
+        attempts += 1
+            
+    if not is_list_of_dicts(vlm_answer_captions):
+        print("All attempts failed, setting vlm_answer_captions to an empty list.")
+        vlm_answer_captions = []
+    
+    print(f"Line ollama_cap, user_query: {user_query}")
+    print(f"Line ollama_cap, vlm_answer: {vlm_answer_captions}")
+
+    return vlm_answer_captions
+
+def is_tuple_list_valid(temp_list):
+    if not isinstance(temp_list, list):
+        return False
+    return all(isinstance(t, tuple) and len(t) == 3 for t in temp_list)
+
+
+def get_obj_rel_from_image_ollama(image_path: str, label_list: list):
+    
+    global system_prompt
+    
+    user_query = f"Here is the list of labels for the annotations of the objects in the image: {label_list}. Please describe the spatial relationships between the objects in the image."
+    
+    vlm_answer = []
+
+    max_retries = 3
+    attempts = 0
+
+    while attempts < max_retries:
+        try:
+            response = ollama.chat(
+                model="llama3.2-vision",
+                # model="minicpm-v",
+                messages=[
+                    {"role": "system", "content": system_prompt_only_top},
+                    {"role": "user", "content": user_query, "images": [image_path]}
+                ]
+            )
+            
+            vlm_answer_str = response['message']['content']
+            print(f"Line ollama_rel, vlm_answer_str: {vlm_answer_str}")
+
+            vlm_answer = extract_list_of_tuples(vlm_answer_str)
+
+            if is_tuple_list_valid(vlm_answer):
+                break
+
+        except Exception as e:
+            print(f"An error occurred: {str(e)}")
+
+        print(f"Invalid response, retrying... ({attempts + 1}/{max_retries})")
+        attempts += 1
+    
+    if not is_tuple_list_valid(vlm_answer):
+        print("All attempts failed, setting vlm_answer to an empty list.")
+        vlm_answer = []
+
+    print(f"Line ollama_rel, user_query: {user_query}")
+    print(f"Line ollama_rel, vlm_answer: {vlm_answer}")
+
+    return vlm_answer
